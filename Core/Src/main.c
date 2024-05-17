@@ -59,7 +59,7 @@ uint32_t baroInitSampleTime = 0;
 
 
 float versionID = 1.000;
-float buildID = 1.000;
+float buildID = 1.010;
 
 tBARODATA ms5607Baro = {0};
 /* USER CODE END PV */
