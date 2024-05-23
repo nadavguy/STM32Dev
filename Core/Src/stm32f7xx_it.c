@@ -22,6 +22,7 @@
 #include "stm32f7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -283,7 +284,20 @@ void OTG_FS_IRQHandler(void)
   /* USER CODE END OTG_FS_IRQn 0 */
   HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
   /* USER CODE BEGIN OTG_FS_IRQn 1 */
+  uint32_t bufLen = 0;
 
+  bufLen = strlen((char *)UserRxBufferFS);
+
+  if ( (bufLen > 0) && (!usbDataChannel.receivedCR))
+  {
+	  usbDataChannel.lastChar = (char)UserRxBufferFS[bufLen - 1];
+	  memcpy(&usbDataChannel.channelArray[usbDataChannel.numberOfChars], UserRxBufferFS, bufLen);
+	  usbDataChannel.numberOfChars += bufLen;
+	  if (usbDataChannel.lastChar == '\r')
+	  {
+		  usbDataChannel.receivedCR = true;
+	  }
+  }
   /* USER CODE END OTG_FS_IRQn 1 */
 }
 

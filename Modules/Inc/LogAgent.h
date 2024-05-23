@@ -13,7 +13,7 @@
 #define GENERALBUFFERSIZE 1024
 #define TERMINALBUFFERSIZE 512
 
-typedef enum colorsForDisplay {GREEN, BLUE, WHITE, RED, BLACK, MAGENTA, COLOROVERRIDE, ORANGE, NOCOLOR} tColorsForDisplay; //Green - if tested True, BLUE - info, RED - Error, MAGENTA - Debug
+typedef enum colorsForDisplay {tGREEN, tBLUE, tWHITE, tRED, tBLACK, tMAGENTA, tCOLOROVERRIDE, tORANGE, tNOCOLOR} tColorsForDisplay; //Green - if tested True, BLUE - info, RED - Error, MAGENTA - Debug
 
 //extern char terminalBuffer[TERMINALBUFFERSIZE];
 

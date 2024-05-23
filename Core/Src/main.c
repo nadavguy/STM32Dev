@@ -30,7 +30,14 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usbd_core.h"
+#include "usbd_desc.h"
+#include "usbd_cdc.h"
+#include "usbd_cdc_if.h"
+
+
 #include "GUI_Paint.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,17 +58,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint8_t baroArrayCounter = 0;
 
-uint8_t baroReadingArray[100] = {0};
+uint8_t usbReadingArray[100] = {0};
 
-uint32_t baroInitSampleTime = 0;
-
+uint16_t usbLength = 0;
 
 float versionID = 1.000;
 float buildID = 1.010;
 
-tBARODATA ms5607Baro = {0};
+tDATACHANNEL usbDataChannel = {0};
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -114,18 +120,15 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-//  initLEDSequences();
-//  led_init();
-  initMS56XXOutputStruct(&ms5607Baro);
-  MS56XXInit();
-  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
-
-  memset(baroReadingArray, 120, sizeof(baroReadingArray));
-  screenInit();
-  screenClear();
-  renderCompleteFrame = true;
-
-  baroInitSampleTime = HAL_GetTick();
+//  screenInit();
+//  screenClear();
+//  renderCompleteFrame = true;
+//  USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
+//  USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, APP_TX_DATA_SIZE);
+  USBD_Interface_fops_FS.Init();
+  HAL_Delay(2000);
+  sprintf(resolvePointerToLogsBuffer(), "%s EEPROM 2 has invalid value\r\n", CT());
+  logData(true, true, tRED);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -134,40 +137,26 @@ int main(void)
   {
 	  checkButtonPress();
 	  checkForButtonPattern();
-
-	  MS56XXCyclicRead();
-	  if ( (HAL_GetTick() - baroInitSampleTime <= 2000) && (ms5607Baro.isNewBaroDataAvailable) )
-	  {
-		  ms5607Baro.filteredData.air_pressure_out = (ms5607Baro.rawData.air_pressure_out + ms5607Baro.filteredData.air_pressure_out)/2;
-		  ms5607Baro.isNewBaroDataAvailable = false;
-		  altitudeFromMeasurements(&ms5607Baro);
-		  ms5607Baro.start_height = ms5607Baro.filteredData.altitude_out;
-	  }
-	  else if ( (HAL_GetTick() - baroInitSampleTime > 2000) && (ms5607Baro.isNewBaroDataAvailable) )
-	  {
-		  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
-		  altitudeFromMeasurements(&ms5607Baro);
-		  ms5607Baro.filteredData.altitude_out = ms5607Baro.filteredData.altitude_out - ms5607Baro.start_height;
-
-		  memcpy(&baroReadingArray[0], &baroReadingArray[1], sizeof(baroReadingArray) - 1);
-		  //		  float localAmpMeasuremnt = (3.3 * (ampReading ) / 4096.0) / 0.4;
-		  //
-		  //
-		  //		  milliAmpsForDisplay = (uint16_t)(localAmpMeasuremnt * 1000.0);
-		  baroReadingArray[99] = (uint8_t)(120 - 20 * (ms5607Baro.filteredData.altitude_out) / 5.0);
-
-		  ms5607Baro.isNewBaroDataAvailable = false;
-	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ms5607ChipUnSelected();
-	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_RESET);
-	  HAL_Delay(1);
-	  screenUpdate(false);
-	  displayNextFrame();
-	  HAL_Delay(1);
-	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_SET);
+//	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_RESET);
+//	  HAL_Delay(1);
+//	  screenUpdate(false);
+//	  displayNextFrame();
+//	  HAL_Delay(1);
+//	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_SET);
+
+	  if (usbDataChannel.receivedCR)
+	  {
+		  char localArray[128] = "";
+		  memcpy(&localArray[0], usbDataChannel.channelArray, usbDataChannel.numberOfChars);
+		  parse((char *)localArray);
+		  usbDataChannel.numberOfChars = 0;
+		  usbDataChannel.lastChar = 0;
+		  memset(usbDataChannel.channelArray, 0, sizeof(usbDataChannel.channelArray));
+		  usbDataChannel.receivedCR = false;
+	  }
   }
   /* USER CODE END 3 */
 }

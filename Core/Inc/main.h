@@ -36,6 +36,9 @@ extern "C" {
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <strings.h>
 
 #include "MenuHelper.h"
 #include "FrameHelper.h"
@@ -48,6 +51,8 @@ extern "C" {
 #include "PushButtonAgent.h"
 #include "ms5607Agent.h"
 #include "GeneralHelper.h"
+#include "LogAgent.h"
+#include "cmd_interp.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -110,9 +115,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 extern tCURSOR_DATA currentCursorPosition;
-extern tBARODATA ms5607Baro;
-
-extern uint8_t baroReadingArray[100];
+extern tDATACHANNEL usbDataChannel;
 
 extern float versionID;
 extern float buildID;

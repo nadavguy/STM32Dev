@@ -204,11 +204,11 @@ void screenUpdate(bool drawDeltaImage)
 		createEmptyFrame(false);
 		//TODO: Draw data to screen
 
-		/*Current Measurement Disaply*/
-		for (int i = 0; i <= 98; i++)
-		{
-			Paint_DrawLine(20 + i, baroReadingArray[i], 20 + i, baroReadingArray[i + 1], CYAN, DOT_PIXEL_1X1, LINE_STYLE_SOLID); // Horizontal line
-		}
+//		/*Current Measurement Disaply*/
+//		for (int i = 0; i <= 98; i++)
+//		{
+//			Paint_DrawLine(20 + i, baroReadingArray[i], 20 + i, baroReadingArray[i + 1], CYAN, DOT_PIXEL_1X1, LINE_STYLE_SOLID); // Horizontal line
+//		}
 
 		/*LED State Indication*/
 //		switch (LEDSwitchState)
@@ -241,11 +241,11 @@ void screenUpdate(bool drawDeltaImage)
 //
 //
 //		//(XCenterstart, Ystart, pString, textColor, backgroundColor, numberOfCharactersToClear, localFont)
-		char localAmps[12]= "";
-		sprintf(localAmps,"%6.3f", ms5607Baro.rawData.air_pressure_out);
-//		if (milliAmpsForDisplay <= 2500)
-//		{
-			centeredString(64, 86, localAmps, WHITE, BLACK, 8, Font8);
+//		char localAmps[12]= "";
+//		sprintf(localAmps,"%6.3f", ms5607Baro.rawData.air_pressure_out);
+////		if (milliAmpsForDisplay <= 2500)
+////		{
+//			centeredString(64, 86, localAmps, WHITE, BLACK, 8, Font8);
 //		}
 //		else
 //		{
