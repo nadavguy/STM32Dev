@@ -98,6 +98,8 @@ void Error_Handler(void);
 #define TIM1_CH3_LED_Red_GPIO_Port GPIOE
 #define TIM2_Ch2_Mosfet3_Pin GPIO_PIN_10
 #define TIM2_Ch2_Mosfet3_GPIO_Port GPIOB
+#define GPIO_Output_QC_DN_Signal2_Pin GPIO_PIN_9
+#define GPIO_Output_QC_DN_Signal2_GPIO_Port GPIOD
 #define GPIO_Input__3_Pin GPIO_PIN_13
 #define GPIO_Input__3_GPIO_Port GPIOD
 #define GPIO_Inout__2_Pin GPIO_PIN_15
@@ -110,6 +112,12 @@ void Error_Handler(void);
 #define GPIO_Output_ChargeEN__GPIO_Port GPIOD
 #define GPIO_Input_ChargeDetect_Pin GPIO_PIN_2
 #define GPIO_Input_ChargeDetect_GPIO_Port GPIOD
+#define GPIO_Output_QC_DP_Signal1_Pin GPIO_PIN_3
+#define GPIO_Output_QC_DP_Signal1_GPIO_Port GPIOD
+#define GPIO_Output_QC_DP_Signal2_Pin GPIO_PIN_5
+#define GPIO_Output_QC_DP_Signal2_GPIO_Port GPIOD
+#define GPIO_Output_QC_DN_Signal1_Pin GPIO_PIN_7
+#define GPIO_Output_QC_DN_Signal1_GPIO_Port GPIOD
 #define TIM2_CH2_Mosfet2_Pin GPIO_PIN_3
 #define TIM2_CH2_Mosfet2_GPIO_Port GPIOB
 
