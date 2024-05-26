@@ -31,6 +31,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "GUI_Paint.h"
+#include "lvgl.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,9 +58,10 @@ uint8_t baroReadingArray[100] = {0};
 
 uint32_t baroInitSampleTime = 0;
 
+static uint8_t buf_1[40960];
 
 float versionID = 1.000;
-float buildID = 1.010;
+float buildID = 1.020;
 
 tBARODATA ms5607Baro = {0};
 /* USER CODE END PV */
@@ -67,7 +69,7 @@ tBARODATA ms5607Baro = {0};
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void my_flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -116,14 +118,28 @@ int main(void)
 
 //  initLEDSequences();
 //  led_init();
-  initMS56XXOutputStruct(&ms5607Baro);
-  MS56XXInit();
-  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
+//  initMS56XXOutputStruct(&ms5607Baro);
+//  MS56XXInit();
+//  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
 
   memset(baroReadingArray, 120, sizeof(baroReadingArray));
   screenInit();
   screenClear();
   renderCompleteFrame = true;
+
+  lv_init();
+
+  lv_display_t * disp = lv_display_create(128, 160); /*Basic initialization with horizontal and vertical resolution in pixels*/
+  lv_display_set_flush_cb(disp, my_flush_cb); /*Set a flush callback to draw to the display*/
+  lv_display_set_buffers(disp, buf_1, NULL, sizeof(buf_1), LV_DISPLAY_RENDER_MODE_FULL); /*Set an initialized buffer*/
+
+  lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x003a57), LV_PART_MAIN);
+  lv_obj_set_style_text_color(lv_screen_active(), lv_color_hex(0xffffff), LV_PART_MAIN);
+
+  /*Create a spinner*/
+  lv_obj_t * spinner = lv_spinner_create(lv_screen_active());
+  lv_obj_set_size(spinner, 64, 64);
+  lv_obj_align(spinner, LV_ALIGN_CENTER, 0, 0);
 
   baroInitSampleTime = HAL_GetTick();
   /* USER CODE END 2 */
@@ -134,40 +150,44 @@ int main(void)
   {
 	  checkButtonPress();
 	  checkForButtonPattern();
-
-	  MS56XXCyclicRead();
-	  if ( (HAL_GetTick() - baroInitSampleTime <= 2000) && (ms5607Baro.isNewBaroDataAvailable) )
-	  {
-		  ms5607Baro.filteredData.air_pressure_out = (ms5607Baro.rawData.air_pressure_out + ms5607Baro.filteredData.air_pressure_out)/2;
-		  ms5607Baro.isNewBaroDataAvailable = false;
-		  altitudeFromMeasurements(&ms5607Baro);
-		  ms5607Baro.start_height = ms5607Baro.filteredData.altitude_out;
-	  }
-	  else if ( (HAL_GetTick() - baroInitSampleTime > 2000) && (ms5607Baro.isNewBaroDataAvailable) )
-	  {
-		  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
-		  altitudeFromMeasurements(&ms5607Baro);
-		  ms5607Baro.filteredData.altitude_out = ms5607Baro.filteredData.altitude_out - ms5607Baro.start_height;
-
-		  memcpy(&baroReadingArray[0], &baroReadingArray[1], sizeof(baroReadingArray) - 1);
-		  //		  float localAmpMeasuremnt = (3.3 * (ampReading ) / 4096.0) / 0.4;
-		  //
-		  //
-		  //		  milliAmpsForDisplay = (uint16_t)(localAmpMeasuremnt * 1000.0);
-		  baroReadingArray[99] = (uint8_t)(120 - 20 * (ms5607Baro.filteredData.altitude_out) / 5.0);
-
-		  ms5607Baro.isNewBaroDataAvailable = false;
-	  }
+//
+//	  MS56XXCyclicRead();
+//	  if ( (HAL_GetTick() - baroInitSampleTime <= 2000) && (ms5607Baro.isNewBaroDataAvailable) )
+//	  {
+//		  ms5607Baro.filteredData.air_pressure_out = (ms5607Baro.rawData.air_pressure_out + ms5607Baro.filteredData.air_pressure_out)/2;
+//		  ms5607Baro.isNewBaroDataAvailable = false;
+//		  altitudeFromMeasurements(&ms5607Baro);
+//		  ms5607Baro.start_height = ms5607Baro.filteredData.altitude_out;
+//	  }
+//	  else if ( (HAL_GetTick() - baroInitSampleTime > 2000) && (ms5607Baro.isNewBaroDataAvailable) )
+//	  {
+//		  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
+//		  altitudeFromMeasurements(&ms5607Baro);
+//		  ms5607Baro.filteredData.altitude_out = ms5607Baro.filteredData.altitude_out - ms5607Baro.start_height;
+//
+//		  memcpy(&baroReadingArray[0], &baroReadingArray[1], sizeof(baroReadingArray) - 1);
+//		  //		  float localAmpMeasuremnt = (3.3 * (ampReading ) / 4096.0) / 0.4;
+//		  //
+//		  //
+//		  //		  milliAmpsForDisplay = (uint16_t)(localAmpMeasuremnt * 1000.0);
+//		  baroReadingArray[99] = (uint8_t)(120 - 20 * (ms5607Baro.filteredData.altitude_out) / 5.0);
+//
+//		  ms5607Baro.isNewBaroDataAvailable = false;
+//	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 	  ms5607ChipUnSelected();
 	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_RESET);
 	  HAL_Delay(1);
-	  screenUpdate(false);
-	  displayNextFrame();
-	  HAL_Delay(1);
-	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_SET);
+//	  screenUpdate(false);
+//	  displayNextFrame();
+
+	  /*Create a spinner*/
+    lv_timer_handler();
+    HAL_Delay(5);
+    //	  HAL_Delay(1);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
   }
   /* USER CODE END 3 */
 }
@@ -226,7 +246,42 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void my_flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p)
+{
+  //Set the drawing region
+//  set_draw_window(area->x1, area->y1, area->x2, area->y2);
 
+  int height = area->y2 - area->y1 + 1;
+  int width = area->x2 - area->x1 + 1;
+
+  //We will do the SPI write manually here for speed
+//  HAL_GPIO_WritePin(DC_PORT, DC_PIN, GPIO_PIN_SET);
+  //CS low to begin data
+//  HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_RESET);
+
+  //Write colour to each pixel
+  for (int i = 0; i < width * height; i = i + 1)
+  {
+//    uint16_t color_full = (color_p->red << 11) | (color_p->green << 5) | (color_p->blue);
+//    nextFrameToDraw[2*i] = (uint8_t)((color_full & 0xFF00) >> 8 );
+//    nextFrameToDraw[2*i + 1] = (uint8_t)((color_full & 0x00FF));
+	  nextFrameToDraw[2 * i] = *(color_p + 1);
+	  nextFrameToDraw[2 * i + 1] = *(color_p);
+//    parallel_write(color_full);
+
+    color_p++;
+    color_p++;
+  }
+
+  //Return CS to high
+//  HAL_GPIO_WritePin(CS_PORT, CS_PIN, GPIO_PIN_SET);
+
+  /* IMPORTANT!!!
+  * Inform the graphics library that you are ready with the flushing*/
+  displayNextFrame();
+  lv_display_flush_ready(disp);
+
+}
 /* USER CODE END 4 */
 
 /**
