@@ -31,6 +31,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "GUI_Paint.h"
+#include "../../lvgl/lvgl.h"
+#include "../hal_stm_lvgl/tft/tft.h"
+#include "../ui/ui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -116,15 +119,19 @@ int main(void)
 
 //  initLEDSequences();
 //  led_init();
-  initMS56XXOutputStruct(&ms5607Baro);
-  MS56XXInit();
-  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
+//  initMS56XXOutputStruct(&ms5607Baro);
+//  MS56XXInit();
+//  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
 
   memset(baroReadingArray, 120, sizeof(baroReadingArray));
   screenInit();
   screenClear();
   renderCompleteFrame = true;
 
+  lv_init();
+  	tft_init();
+
+  	ui_init();
   baroInitSampleTime = HAL_GetTick();
   /* USER CODE END 2 */
 
@@ -135,37 +142,39 @@ int main(void)
 	  checkButtonPress();
 	  checkForButtonPattern();
 
-	  MS56XXCyclicRead();
-	  if ( (HAL_GetTick() - baroInitSampleTime <= 2000) && (ms5607Baro.isNewBaroDataAvailable) )
-	  {
-		  ms5607Baro.filteredData.air_pressure_out = (ms5607Baro.rawData.air_pressure_out + ms5607Baro.filteredData.air_pressure_out)/2;
-		  ms5607Baro.isNewBaroDataAvailable = false;
-		  altitudeFromMeasurements(&ms5607Baro);
-		  ms5607Baro.start_height = ms5607Baro.filteredData.altitude_out;
-	  }
-	  else if ( (HAL_GetTick() - baroInitSampleTime > 2000) && (ms5607Baro.isNewBaroDataAvailable) )
-	  {
-		  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
-		  altitudeFromMeasurements(&ms5607Baro);
-		  ms5607Baro.filteredData.altitude_out = ms5607Baro.filteredData.altitude_out - ms5607Baro.start_height;
-
-		  memcpy(&baroReadingArray[0], &baroReadingArray[1], sizeof(baroReadingArray) - 1);
-		  //		  float localAmpMeasuremnt = (3.3 * (ampReading ) / 4096.0) / 0.4;
-		  //
-		  //
-		  //		  milliAmpsForDisplay = (uint16_t)(localAmpMeasuremnt * 1000.0);
-		  baroReadingArray[99] = (uint8_t)(120 - 20 * (ms5607Baro.filteredData.altitude_out) / 5.0);
-
-		  ms5607Baro.isNewBaroDataAvailable = false;
-	  }
+//	  MS56XXCyclicRead();
+//	  if ( (HAL_GetTick() - baroInitSampleTime <= 2000) && (ms5607Baro.isNewBaroDataAvailable) )
+//	  {
+//		  ms5607Baro.filteredData.air_pressure_out = (ms5607Baro.rawData.air_pressure_out + ms5607Baro.filteredData.air_pressure_out)/2;
+//		  ms5607Baro.isNewBaroDataAvailable = false;
+//		  altitudeFromMeasurements(&ms5607Baro);
+//		  ms5607Baro.start_height = ms5607Baro.filteredData.altitude_out;
+//	  }
+//	  else if ( (HAL_GetTick() - baroInitSampleTime > 2000) && (ms5607Baro.isNewBaroDataAvailable) )
+//	  {
+//		  ms5607Baro.filteredData.air_pressure_out = ms5607Baro.rawData.air_pressure_out;
+//		  altitudeFromMeasurements(&ms5607Baro);
+//		  ms5607Baro.filteredData.altitude_out = ms5607Baro.filteredData.altitude_out - ms5607Baro.start_height;
+//
+//		  memcpy(&baroReadingArray[0], &baroReadingArray[1], sizeof(baroReadingArray) - 1);
+//		  //		  float localAmpMeasuremnt = (3.3 * (ampReading ) / 4096.0) / 0.4;
+//		  //
+//		  //
+//		  //		  milliAmpsForDisplay = (uint16_t)(localAmpMeasuremnt * 1000.0);
+//		  baroReadingArray[99] = (uint8_t)(120 - 20 * (ms5607Baro.filteredData.altitude_out) / 5.0);
+//
+//		  ms5607Baro.isNewBaroDataAvailable = false;
+//	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 	  ms5607ChipUnSelected();
 	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_RESET);
 	  HAL_Delay(1);
-	  screenUpdate(false);
-	  displayNextFrame();
+//	  screenUpdate(false);
+//	  displayNextFrame();
+	  HAL_Delay(5);
+	  		lv_task_handler();
 	  HAL_Delay(1);
 	  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_1,GPIO_PIN_SET);
   }
