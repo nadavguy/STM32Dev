@@ -32,6 +32,7 @@
 /* USER CODE BEGIN Includes */
 #include "GUI_Paint.h"
 #include "lvgl.h"
+#include "ui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -132,14 +133,15 @@ int main(void)
   lv_display_t * disp = lv_display_create(128, 160); /*Basic initialization with horizontal and vertical resolution in pixels*/
   lv_display_set_flush_cb(disp, my_flush_cb); /*Set a flush callback to draw to the display*/
   lv_display_set_buffers(disp, buf_1, NULL, sizeof(buf_1), LV_DISPLAY_RENDER_MODE_FULL); /*Set an initialized buffer*/
+  ui_init();
 
-  lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x003a57), LV_PART_MAIN);
-  lv_obj_set_style_text_color(lv_screen_active(), lv_color_hex(0xffffff), LV_PART_MAIN);
-
-  /*Create a spinner*/
-  lv_obj_t * spinner = lv_spinner_create(lv_screen_active());
-  lv_obj_set_size(spinner, 64, 64);
-  lv_obj_align(spinner, LV_ALIGN_CENTER, 0, 0);
+//  lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x003a57), LV_PART_MAIN);
+//  lv_obj_set_style_text_color(lv_screen_active(), lv_color_hex(0xffffff), LV_PART_MAIN);
+//
+//  /*Create a spinner*/
+//  lv_obj_t * spinner = lv_spinner_create(lv_screen_active());
+//  lv_obj_set_size(spinner, 64, 64);
+//  lv_obj_align(spinner, LV_ALIGN_CENTER, 0, 0);
 
   baroInitSampleTime = HAL_GetTick();
   /* USER CODE END 2 */
