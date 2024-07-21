@@ -70,6 +70,7 @@ tBARODATA ms5607Baro = {0};
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+lv_obj_t * find_textarea(lv_obj_t * parent_screen);
 void my_flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p);
 /* USER CODE END PFP */
 
@@ -186,6 +187,25 @@ int main(void)
 //	  displayNextFrame();
 
 	  /*Create a spinner*/
+//	  const char * name = "gpsTimeText";  // Name assigned during creation
+//	  lv_obj_t *ta = lv_obj_get_display(ui_Screen1);
+
+//	  lv_obj_t * textarea = find_textarea(lv_scr_act());
+//
+//	      // Check if the textarea was found
+//	      if (textarea != NULL)
+//	      {
+//	          // Perform operations on the textarea object
+//	          lv_textarea_set_text(textarea, "Hello LVGL!");
+//	      }
+
+	  lv_textarea_set_text(ui_gpsTimeText, "Test");
+
+//	  lv_textarea_set_text(ta, "Hello");
+	  lv_chart_series_t * ui_baro1_series_1 = lv_chart_add_series(ui_baro1, lv_color_hex(0x808080), LV_CHART_AXIS_PRIMARY_Y);
+	  	static lv_coord_t ui_baro1_series_1_array[] = { 0, 10, 20, 40, 80, 80, 40, 20, 10, 30 };
+	  	lv_chart_set_ext_y_array(ui_baro1, ui_baro1_series_1, ui_baro1_series_1_array);
+	      lv_chart_set_next_value(ui_baro1, ui_baro1_series_1, 30);
     lv_timer_handler();
     HAL_Delay(5);
     //	  HAL_Delay(1);
@@ -283,6 +303,29 @@ void my_flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * color_p)
   displayNextFrame();
   lv_display_flush_ready(disp);
 
+}
+
+// Example function to find a textarea by iterating through child objects
+lv_obj_t * find_textarea(lv_obj_t * parent_screen)
+{
+    lv_obj_t * ta = NULL;
+    lv_obj_t * child = NULL;
+
+    // Iterate through all child objects of the screen
+    child = lv_obj_get_child(parent_screen, NULL);
+    while (child != NULL)
+    {
+        // Check if the child object is a textarea
+        if (lv_obj_get_class(child) == &lv_textarea_class)
+        {
+            ta = child;  // Found the textarea
+            break;
+        }
+        // Move to the next child object
+//        child = lv_obj_get_child_back(parent_screen, child);
+    }
+
+    return ta;
 }
 /* USER CODE END 4 */
 

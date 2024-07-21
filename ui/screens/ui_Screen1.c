@@ -7,28 +7,47 @@
 
 void ui_Screen1_screen_init(void)
 {
-ui_Screen1 = lv_obj_create(NULL);
-lv_obj_clear_flag( ui_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+    ui_Screen1 = lv_obj_create(NULL);
+    lv_obj_clear_flag(ui_Screen1, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_PRESS_LOCK | LV_OBJ_FLAG_SCROLLABLE);      /// Flags
+    lv_obj_set_style_bg_color(ui_Screen1, lv_color_hex(0x5A4CA0), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Screen1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-//ui_Arc1 = lv_arc_create(ui_Screen1);
-//lv_obj_set_width( ui_Arc1, 80);
-//lv_obj_set_height( ui_Arc1, 80);
-//lv_obj_set_x( ui_Arc1, -28 );
-//lv_obj_set_y( ui_Arc1, -16 );
-//lv_obj_set_align( ui_Arc1, LV_ALIGN_CENTER );
-//lv_arc_set_value(ui_Arc1, 50);
+    ui_gpsTimeText = lv_textarea_create(ui_Screen1);
+    lv_obj_set_width(ui_gpsTimeText, 160);
+    lv_obj_set_height(ui_gpsTimeText, LV_SIZE_CONTENT);    /// 20
+    lv_textarea_set_placeholder_text(ui_gpsTimeText, "Placeholder...");
+    lv_textarea_set_one_line(ui_gpsTimeText, true);
+    lv_obj_clear_flag(ui_gpsTimeText, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_PRESS_LOCK | LV_OBJ_FLAG_CLICK_FOCUSABLE |
+                      LV_OBJ_FLAG_GESTURE_BUBBLE | LV_OBJ_FLAG_SNAPPABLE);     /// Flags
+    lv_obj_set_style_bg_color(ui_gpsTimeText, lv_color_hex(0x5A4CA0), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_gpsTimeText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+//    lv_obj_add_event_cb(ui_gpsTimeText, updateTextArea, LV_EVENT_VALUE_CHANGED, NULL);
+    lv_obj_add_event_cb(ui_gpsTimeText, ui_event_gpsTimeText1, LV_EVENT_VALUE_CHANGED, NULL);
 
-  lv_obj_t * spinner = lv_spinner_create(ui_Screen1);
-  lv_obj_set_size(spinner, 64, 64);
-  lv_obj_align(spinner, LV_ALIGN_CENTER, 0, 0);
 
 
-ui_Image1 = lv_img_create(ui_Screen1);
-lv_img_set_src(ui_Image1, &ui_img_baseline_thumb_up_black_18dp_png);
-lv_obj_set_width( ui_Image1, LV_SIZE_CONTENT);  /// 36
-lv_obj_set_height( ui_Image1, LV_SIZE_CONTENT);   /// 36
-lv_obj_set_align( ui_Image1, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_Image1, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
-lv_obj_clear_flag( ui_Image1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+    ui_baro1 = lv_chart_create(ui_Screen1);
+    lv_obj_set_width(ui_baro1, 131);
+    lv_obj_set_height(ui_baro1, 45);
+    lv_obj_set_x(ui_baro1, 0);
+    lv_obj_set_y(ui_baro1, 38);
+    lv_obj_set_align(ui_baro1, LV_ALIGN_TOP_RIGHT);
+    lv_chart_set_type(ui_baro1, LV_CHART_TYPE_LINE);
+    lv_chart_set_range(ui_baro1, LV_CHART_AXIS_SECONDARY_Y, 0, 0);
+    lv_chart_set_div_line_count(ui_baro1, 3, 16);
+//    lv_chart_set_axis_tick(ui_baro1, LV_CHART_AXIS_PRIMARY_X, 0, 0, 0, 0, false, 50);
+//    lv_chart_set_axis_tick(ui_baro1, LV_CHART_AXIS_PRIMARY_Y, 10, 5, 5, 2, true, 50);
+//    lv_chart_set_axis_tick(ui_baro1, LV_CHART_AXIS_SECONDARY_Y, 0, 0, 0, 0, false, 25);
+
+//    lv_obj_add_event_cb(ui_baro1, updateBaro1, LV_EVENT_VALUE_CHANGED, NULL);
+//
+//    lv_chart_series_t * ui_baro1_series_1 = lv_chart_add_series(ui_baro1, lv_color_hex(0x808080), LV_CHART_AXIS_PRIMARY_Y);
+//    static lv_coord_t ui_baro1_series_1_array[] = { 0, 10, 20, 40, 80, 80, 40, 20, 10, 0 };
+//    lv_chart_set_ext_y_array(ui_baro1, ui_baro1_series_1, ui_baro1_series_1_array);
+
+
+
+    lv_obj_add_event_cb(ui_baro1, ui_event_baro1, LV_EVENT_VALUE_CHANGED, NULL);
 
 }
+

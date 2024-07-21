@@ -15,19 +15,16 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
-// SCREEN: ui_Screen1
-void ui_Screen1_screen_init(void);
-extern lv_obj_t *ui_Screen1;
-extern lv_obj_t *ui_Arc1;
-extern lv_obj_t *ui_Image1;
-extern lv_obj_t *ui____initial_actions0;
+	// SCREEN: ui_Screen1
+	void ui_Screen1_screen_init(void);
+	extern lv_obj_t * ui_Screen1;
+	void ui_event_gpsTimeText1(lv_event_t * e);
+	extern lv_obj_t * ui_gpsTimeText;
+	void ui_event_baro1(lv_event_t * e);
+	extern lv_obj_t * ui_baro1;
+	extern lv_obj_t * ui____initial_actions0;
 
-LV_IMG_DECLARE( ui_img_baseline_thumb_up_black_18dp_png);   // assets/baseline_thumb_up_black_18dp.png
-
-
-
-
-void ui_init(void);
+	void ui_init(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

@@ -9,6 +9,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+	void updateTextArea(lv_event_t * e);
+	void updateBaro1(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/
